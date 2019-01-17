@@ -11,9 +11,9 @@ DigitalOut h(p25);
 DigitalOut i(p24);
 DigitalOut j(p23);
 
-
 AnalogIn mysen(p20);
 DigitalOut myled(LED1);
+
 PwmOut mysp(p22);
 
 void meter(int lv){
@@ -71,16 +71,91 @@ void meter(int lv){
       break;
     }
   }
-  /*検出音*/
-  mysp.period(1.0/260);
-  mysp.write(0.5);
-  wait(0.2);
-  mysp.write(0.0);
+}
+
+void famima_sound(){
+#define WRITE 0.5  //
+#define WAIT 5.0/14.0 //
+  mysp.period(1.0/739.989); //ファ＃
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/587.330); //レ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/440.000); //ラ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/587.330); //レ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/659.255); //ミ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/880.000); //ラ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/880.000); //ラ
+  mysp.write(WRITE);
+  wait(2*WAIT);
+  
+  mysp.period(1.0/659.255); //ミ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/739.989); //ファ＃
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/659.255); //ミ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/440.000); //ラ
+  mysp.write(WRITE);
+  wait(WAIT);
+  
+  mysp.period(1.0/587.330); //レ
+  mysp.write(WRITE);
+  wait(2*WAIT);
+
+  mysp.write(0.0); 
+}
+
+
+void siren_sound(){
+#define PI 1.0/960.000 
+#define PO 1.0/770.000
+#define WRITE 0.5
+#define WAIT 0.65    
+
+    mysp.period(PI);
+    mysp.write(WRITE);
+    wait(WAIT);
+    
+    mysp.period(PO);
+    mysp.write(WRITE);
+    wait(WAIT);
+    
 }
 
 
 int  main(){
-  int dan = 0;
+int dan = 0;
+DigitalIn mysw(p10);
+  /*スイッチ入力*/
+  
+  
+  
+  
+  
+  
+  
   while(dan <= 10){
     /*検出時*/
     if(mysen >= 3.0/3.3){
@@ -123,9 +198,18 @@ int  main(){
       }
       else if(dan == 10){
         meter(10);
-      }
-        
+      }   
     }
+    while(dan > 10){
+        if (mysw == 1){
+            famima_sound();
+            }
+        else if(mysw == 0){
+            siren_sound();
+            }
+        
+        }
+    
   }
   
 
