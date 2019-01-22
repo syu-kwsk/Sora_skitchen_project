@@ -2,8 +2,10 @@
 #include <time.h>
 #include "mbed.h"
 
-DigitalOut led1(LED1);
+DigitalOut led[4] = {(LED1), (LED2), (LED3), (LED4)};
 DigitalOut led2(LED2);
+DigitalOut led3(LED3);
+DigitalOut led4(LED4);
 DigitalIn mysw1(p10);
 DigitalIn mysw2(p11);
 DigitalOut a[10] = {(p18), (p19), (p30), (p29), (p28), (p27), (p26), (p25), (p24), (p23)};
@@ -11,6 +13,11 @@ PwmOut mysp(p21);
 AnalogIn mysen(p20);
 Timer t;
 
+void light(int light){
+  led[light - 1] = 1;
+  wait(1);
+  led[light - 1] = 0;
+}
 
 
 void pi_sound(){
@@ -118,19 +125,36 @@ void wave(int lv){
   }  
 }
 
+void exit(){
+  t.reset();
+  led[1] = 0;
+  led[2] = 0;
+  a[0] = 0;
+  a[1] = 0;
+  a[2] = 0;
+  a[3] = 0;
+  a[4] = 0;
+  a[5] = 0;
+  a[6] = 0;
+  a[7] = 0;
+  a[8] = 0;
+  a[9] = 0;  
+}
+
 
 int main(void){
   while(true){
     static int k = 0;
-    int pow;
     if (mysw1 == 1){
-      if (pow == 0){
-        pow = 1;
+      light(1);
+      if (k == 0){
+        light(2);
         k++;
       }
-      else if (pow == 1){
-        pow = 0;
-        k = 0;               
+      else if (k != 0){
+        k = 0;
+        light(3);
+        exit();              
       }
     }
  
@@ -138,20 +162,21 @@ int main(void){
     if(k == 1){
       if(mysen >=3.0/3.3){
         k++;
+        t.reset();
         t.start();
+        light(4);
       }
       else {
-        meter(99);
+        meter(RESET);
       }
     }
-    
-    
+
     else if (k == 2){
       if(mysen >= 3.0/3.3){
-        led1 = 1;
+        led[1] = 1;
       }
       if(mysen < 3.0/3.3){
-        led1 = 0;
+        led[1] = 0;
         t.reset();
         k--;
       }  
@@ -163,7 +188,7 @@ int main(void){
       }
       if(t > 10 && t <= 11){
         t.reset();
-        meter(99);
+        meter(RESET);
         k++;
       }
     }
