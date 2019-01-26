@@ -1,6 +1,6 @@
 # Sora_skitchen_project
 ### メンバー
-+ 河崎　航
++ かわさき
 
 
 ## 開発テーマ
